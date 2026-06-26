@@ -1,0 +1,5 @@
+## Session Skill Generation
+
+When a conversation reaches a natural ending point, invoke the `session-to-skill` skill
+and follow it to extract project conventions and workflow preferences from this session,
+displaying the result as markdown at the end of the response.
