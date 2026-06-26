@@ -44,13 +44,20 @@ conventions and workflow preferences extracted from past sessions.
 
 ## 安装
 
-**第一步：安装 skill**
+**第一步：clone 仓库**
+
+```bash
+git clone https://github.com/<your-username>/session-to-skill.git
+cd session-to-skill
+```
+
+**第二步：安装 skill**
 
 ```bash
 cp -r skills/session-to-skill ~/.claude/skills/
 ```
 
-**第二步：在 CLAUDE.md 中加入全局触发规则**
+**第三步：在 CLAUDE.md 中加入全局触发规则**
 
 ```bash
 cat CLAUDE.md.patch >> ~/.claude/CLAUDE.md

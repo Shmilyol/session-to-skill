@@ -44,13 +44,20 @@ Next session, only new items are output — nothing already in the file is repea
 
 ## Installation
 
-**Step 1: Install the skill**
+**Step 1: Clone the repository**
+
+```bash
+git clone https://github.com/<your-username>/session-to-skill.git
+cd session-to-skill
+```
+
+**Step 2: Install the skill**
 
 ```bash
 cp -r skills/session-to-skill ~/.claude/skills/
 ```
 
-**Step 2: Add the global trigger to CLAUDE.md**
+**Step 3: Add the global trigger to CLAUDE.md**
 
 ```bash
 cat CLAUDE.md.patch >> ~/.claude/CLAUDE.md
