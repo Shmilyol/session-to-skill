@@ -2,15 +2,15 @@
 
 **Language:** **中文** | [English](README.en.md)
 
-一个 skill，在工作会话结束时自动从对话中提炼项目约定和协作偏好，生成随时可保存的项目专属 skill 文件——无需手动编写。
+一个 skill，在工作会话结束时自动从对话中提炼项目约定和协作偏好，并直接写入项目专属 skill 文件——无需手动编写，无需手动保存。
 
 ## 工作原理
 
 会话结束时，当你说"谢谢"、"收工"、"done"等收尾语，Claude 会：
 
 1. **扫描本次对话**，提炼明确出现的约定和偏好
-2. **找到或创建**该项目的专属 skill 文件：`~/.claude/skills/<项目名>-skill/SKILL.md`
-3. **输出结构化 markdown**——首次使用输出完整文件，后续只输出新增内容
+2. **展示预览并询问确认**，待你确认后再写入
+3. **直接写入**该项目的专属 skill 文件：`~/.claude/skills/<项目名>-skill/SKILL.md`
 
 每个项目有且只有一个专属 skill 文件，绝不干扰其他项目的 skill。
 
@@ -21,26 +21,25 @@
 Claude 回复：
 
 ```
-不客气！这次会话很顺利。
+本次会话提炼到以下内容，准备新建 `~/.claude/skills/my-app-skill/SKILL.md`：
 
----
----
-name: my-app-skill
-description: Use when working on the my-app project. Loads project-specific
-conventions and workflow preferences extracted from past sessions.
----
-
-## Project Conventions
+**Project Conventions（新增）**
 - 始终使用具名导出，禁止 default export
 
-## Workflow Preferences
+**Workflow Preferences（新增）**
 - 写代码前必须先给出计划（对话中确认 ≥ 2 次）
 
----
-> 保存路径：~/.claude/skills/my-app-skill/SKILL.md
+确认后我会直接写入文件。继续吗？
 ```
 
-下次会话结束时，只输出新增内容——已有的条目不会重复出现。
+你回复"继续"后，Claude 直接将文件写入 `~/.claude/skills/my-app-skill/SKILL.md`，并确认：
+
+```
+不客气！这次会话很顺利。
+已保存到 `~/.claude/skills/my-app-skill/SKILL.md`
+```
+
+下次会话结束时，只写入新增内容——已有的条目不会重复出现。
 
 ## 安装
 

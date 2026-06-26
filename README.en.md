@@ -2,15 +2,15 @@
 
 **Language:** [中文](README.md) | **English**
 
-A skill that automatically extracts project conventions and workflow preferences from your work session and generates a ready-to-save project skill file — without you having to write one manually.
+A skill that automatically extracts project conventions and workflow preferences from your work session and writes them directly to a project skill file — no manual writing, no manual saving.
 
 ## How it works
 
 At the end of a session, when you say "thanks", "done", "收工", or similar, Claude:
 
 1. **Scans the conversation** for explicitly stated conventions and preferences
-2. **Finds or creates** a single dedicated skill file for this project: `~/.claude/skills/<project-name>-skill/SKILL.md`
-3. **Outputs structured markdown** — a full file on first use, or just the new items to append on subsequent sessions
+2. **Shows a preview and asks for confirmation** before writing anything
+3. **Writes directly** to the project's dedicated skill file: `~/.claude/skills/<project-name>-skill/SKILL.md`
 
 Each project gets exactly one skill file. It never touches any other project's skills.
 
@@ -21,26 +21,26 @@ You finish a session on a project called `my-app` where you said "always use nam
 Claude responds:
 
 ```
-You're welcome! Great session.
+Extracted the following from this session, ready to create
+`~/.claude/skills/my-app-skill/SKILL.md`:
 
----
----
-name: my-app-skill
-description: Use when working on the my-app project. Loads project-specific
-conventions and workflow preferences extracted from past sessions.
----
-
-## Project Conventions
+**Project Conventions (new)**
 - Always use named exports — never default exports
 
-## Workflow Preferences
+**Workflow Preferences (new)**
 - Always present a plan before writing any code (confirmed ≥ 2 times)
 
----
-> Save to: ~/.claude/skills/my-app-skill/SKILL.md
+Shall I write the file now?
 ```
 
-Next session, only new items are output — nothing already in the file is repeated.
+You reply "yes", and Claude writes the file directly, then confirms:
+
+```
+You're welcome! Great session.
+Saved to `~/.claude/skills/my-app-skill/SKILL.md`
+```
+
+Next session, only new items are written — nothing already in the file is repeated.
 
 ## Installation
 
