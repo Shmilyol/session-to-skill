@@ -2,7 +2,8 @@
 
 **Language:** **中文** | [English](README.en.md)
 
-一个 skill，在工作会话结束时自动从对话中提炼项目约定和协作偏好，并直接写入项目专属 skill 文件——无需手动编写，无需手动保存。
+一个 skill，在工作会话结束时自动从对话中提炼项目约定和协作偏好，并直接写入项目专属 skill
+文件——无需手动编写，无需手动保存。
 
 ## 工作原理
 
@@ -16,7 +17,8 @@
 
 ## 示例
 
-你在一个叫 `my-app` 的项目中结束了一次会话，其中说过"始终用具名导出"和"写代码前先给我看计划"（说了两次）。你输入：*"谢谢，今天就这样了！"*
+你在一个叫 `my-app` 的项目中结束了一次会话，其中说过"始终用具名导出"和"写代码前先给我看计划"
+（说了两次）。你输入：*"谢谢，今天就这样了！"*
 
 Claude 回复：
 
@@ -50,6 +52,7 @@ curl -fsSL https://raw.githubusercontent.com/Shmilyol/session-to-skill/main/inst
 ```
 
 脚本会自动：
+
 - 下载 skill 文件到 `~/.claude/skills/session-to-skill/`
 - 将触发规则追加到 `~/.claude/CLAUDE.md`
 - 检测是否已安装，避免重复写入
@@ -93,13 +96,13 @@ cat CLAUDE.md.patch >> ~/.claude/CLAUDE.md
 ```
 会话结束时：
 1. ~/.claude/skills/<项目名>-skill/SKILL.md 不存在？
-   → 输出完整文件内容，首次创建
+   → 直接写入完整文件，首次创建
 
-2. 文件已存在？
-   → 只输出新增内容，已有条目跳过（去重）
+2. 文件已存在，新增后 ≤ 180 行？
+   → 读取现有内容，合并新条目（去重），写入
 
-3. 文件达到 200 行？
-   → 拆分为总览 SKILL.md + reference/topic.md
+3. 文件会超过 180 行？
+   → 拆分：SKILL.md 保留总览，内容移至 reference/conventions.md 和 reference/workflow.md
 ```
 
 项目名取自 git 仓库名，或当前工作目录名。
@@ -108,25 +111,30 @@ cat CLAUDE.md.patch >> ~/.claude/CLAUDE.md
 
 满足以下任一条件时激活：
 
-- 独立的收尾消息：`done` / `thanks` / `谢谢` / `收工` / `完成了` / `就这样` / `好了`
-- 主要任务已完成，无新需求，最后几条消息为确认性质
-- 明确请求：`"生成 skill"` / `"总结一下"` / `"帮我提炼 skill"` / `"generate skill"`
+- **会话结尾**：独立的收尾词，如 `done` / `thanks` / `谢谢` / `收工` / `完成了` / `就这样` / `好了`
+  ，或主要任务全部完成、无新需求
+- **主动请求**：`"生成 skill"` / `"总结一下"` / `"帮我提炼 skill"` / `"generate skill"`
+- **会话中途偏好信号**：消息中出现明确的拒绝、接受或推荐词，如 `不要` / `别` / `就可以` / `你应该` /
+  `你需要` / `don't` / `always` 等，Claude 会立即询问是否记录到项目 skill
 
-**不触发**：`"嗯"`、`"ok"`、会话中途的确认、或任何提出新问题的消息。
+**不触发**：`"嗯"`、`"ok"`、会话中途的普通确认、或任何提出新问题的消息。
 
 ## 兼容性
 
-支持 Claude Code 及所有兼容 [Agent Skills](https://agentskills.io/specification) 规范的 agent（Codex 等）。
+支持 Claude Code 及所有兼容 [Agent Skills](https://agentskills.io/specification) 规范的 agent（Codex
+等）。
 
 ## 目录结构
 
 ```
 skills/session-to-skill/
-  SKILL.md              # Skill 本体
-CLAUDE.md.patch         # 追加到 ~/.claude/CLAUDE.md 的触发规则
+  SKILL.md                        # Skill 本体
+  reference/
+    compact-reminder.md           # /compact 时附加的提示模板
+CLAUDE.md.patch                   # 追加到 ~/.claude/CLAUDE.md 的触发规则
 docs/superpowers/
-  specs/                # 设计文档（v1）
-  plans/                # 实现计划
+  specs/                          # 设计文档（v1）
+  plans/                          # 实现计划
 ```
 
 ## 许可证

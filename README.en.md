@@ -2,7 +2,8 @@
 
 **Language:** [中文](README.md) | **English**
 
-A skill that automatically extracts project conventions and workflow preferences from your work session and writes them directly to a project skill file — no manual writing, no manual saving.
+A skill that automatically extracts project conventions and workflow preferences from your work
+session and writes them directly to a project skill file — no manual writing, no manual saving.
 
 ## How it works
 
@@ -10,13 +11,15 @@ At the end of a session, when you say "thanks", "done", "收工", or similar, Cl
 
 1. **Scans the conversation** for explicitly stated conventions and preferences
 2. **Shows a preview and asks for confirmation** before writing anything
-3. **Writes directly** to the project's dedicated skill file: `~/.claude/skills/<project-name>-skill/SKILL.md`
+3. **Writes directly** to the project's dedicated skill file:
+   `~/.claude/skills/<project-name>-skill/SKILL.md`
 
 Each project gets exactly one skill file. It never touches any other project's skills.
 
 ## Example
 
-You finish a session on a project called `my-app` where you said "always use named exports" and "show me a plan before coding" (twice). You type: *"Thanks, done for today!"*
+You finish a session on a project called `my-app` where you said "always use named exports" and "
+show me a plan before coding" (twice). You type: *"Thanks, done for today!"*
 
 Claude responds:
 
@@ -51,6 +54,7 @@ curl -fsSL https://raw.githubusercontent.com/Shmilyol/session-to-skill/main/inst
 ```
 
 The script will:
+
 - Download the skill to `~/.claude/skills/session-to-skill/`
 - Append the trigger rule to `~/.claude/CLAUDE.md`
 - Skip if already installed (safe to re-run)
@@ -74,11 +78,13 @@ The skill activates automatically at the end of future sessions.
 ## What gets extracted
 
 **Project Conventions** — only when explicitly signaled:
+
 - You corrected Claude's approach ("don't do it that way", "use X instead")
 - You confirmed a non-obvious choice ("yes, exactly like that")
 - You made an explicit tech/naming/structure decision
 
 **Workflow Preferences** — only when explicitly signaled:
+
 - You required a specific step ("show me the plan first")
 - You rejected a behavior ("don't auto-commit")
 - The same pattern appeared ≥ 2 times in the session
@@ -92,13 +98,14 @@ Each project has exactly one dedicated skill file. Claude never touches other pr
 ```
 On session end:
 1. ~/.claude/skills/<project-name>-skill/SKILL.md does not exist?
-   → Output full file to create
+   → Write full file (first session)
 
-2. File already exists?
-   → Output only new items to append; skip duplicates
+2. File exists, stays ≤ 180 lines after adding?
+   → Read, merge new items (skip duplicates), write
 
-3. File reaches 200 lines?
-   → Split: SKILL.md becomes overview + reference/topic.md
+3. File would exceed 180 lines?
+   → Split: SKILL.md becomes a slim index;
+     content moves to reference/conventions.md and reference/workflow.md
 ```
 
 Project name is derived from the git repo name, or the working directory name.
@@ -106,25 +113,33 @@ Project name is derived from the git repo name, or the working directory name.
 ## Trigger conditions
 
 Activates on any of:
-- Standalone closing message: `done` / `thanks` / `谢谢` / `收工` / `完成了` / `就这样`
-- All tasks complete, no new requests, last messages are confirmations
-- Explicit request: `"生成 skill"` / `"generate skill"` / `"总结一下"`
 
-Does **not** trigger on: `"嗯"`, `"ok"`, mid-session acknowledgments, or any message asking a new question.
+- **End-of-session:** Standalone closing word, e.g. `done` / `thanks` / `谢谢` / `收工` / `完成了` /
+  `就这样` / `好了` — or all tasks complete with no new requests
+- **Explicit request:** `generate skill` / `生成 skill` / `总结一下` / `帮我提炼 skill`
+- **Mid-session preference signal:** Message contains a rejection, acceptance, or recommendation
+  keyword — e.g. `don't` / `never` / `always` / `不要` / `别` / `你应该` / `你需要` — Claude
+  immediately asks whether to record it in the project skill
+
+Does **not** trigger on: `嗯`, `ok`, `好`, mid-session acknowledgments, or any message asking a new
+question.
 
 ## Compatibility
 
-Works with Claude Code and any agent that supports the [Agent Skills](https://agentskills.io/specification) format (Codex, etc.).
+Works with Claude Code and any agent that supports
+the [Agent Skills](https://agentskills.io/specification) format (Codex, etc.).
 
 ## Repository structure
 
 ```
 skills/session-to-skill/
-  SKILL.md              # The skill itself
-CLAUDE.md.patch         # Snippet to append to ~/.claude/CLAUDE.md
+  SKILL.md                        # The skill itself
+  reference/
+    compact-reminder.md           # Template appended when suggesting /compact
+CLAUDE.md.patch                   # Snippet to append to ~/.claude/CLAUDE.md
 docs/superpowers/
-  specs/                # Design spec (v1)
-  plans/                # Implementation plan
+  specs/                          # Design spec (v1)
+  plans/                          # Implementation plan
 ```
 
 ## License
