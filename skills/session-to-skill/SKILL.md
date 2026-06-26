@@ -34,30 +34,62 @@ Extract ONLY when explicitly signaled:
 
 **Hard filter:** No inference. No guessing. If a signal is ambiguous, skip it. One-off context (e.g., "fix this file") is never a convention. If no signals pass the filter, generate nothing — silently skip.
 
-## Routing Logic
+## Project Skill File
 
-Before generating output, scan `~/.claude/skills/<project>-skills/` for existing files.
-Read each file's `description` field to understand its scope.
+Each project gets exactly one dedicated skill directory: `~/.claude/skills/<project-name>-skill/`.
+**Never read, write, or modify any other project's skill files.**
+
+Determine `<project-name>` from (in priority order):
+1. Git repo name (`git rev-parse --show-toplevel | xargs basename`)
+2. Current working directory name
+3. Ask the user if neither is available
 
 ```
-For each extracted item:
-1. Already exists as identical or highly similar bullet? → Skip (deduplicate)
-2. Existing file description semantically matches + file < 200 lines? → Append to that file
-3. Existing file matches but ≥ 200 lines? → Split: SKILL.md stays as overview,
-   move heavy content to reference/topic.md; update both descriptions
-4. No matching file exists? → Create new file with gerund name + description
+On session end:
+1. Does ~/.claude/skills/<project-name>-skill/SKILL.md exist?
+   - No  → Output full new file (see "First session" format below)
+   - Yes → Read the file; count current lines → go to step 2
+
+2. current_lines + estimated_new_lines ≤ 180?
+   - Yes → Output new items only; skip duplicates (see "Subsequent sessions" format)
+   - No  → Trigger split (see "Split" format below)
 ```
 
-When project has 2+ skill files: maintain `<project>-skills/INDEX.md` listing all files and their scope.
+## Confirm Before Output
+
+Before outputting any skill content, show the user a confirmation message and wait for their response.
+
+**Confirmation message format:**
+
+```
+本次会话提炼到以下内容，准备 [新建 | 追加到 | 拆分] `~/.claude/skills/<project-name>-skill/SKILL.md`：
+
+**Project Conventions（新增）**
+- <item>
+
+**Workflow Preferences（新增）**
+- <item>
+
+确认后我会输出完整内容供你保存。继续吗？
+```
+
+**User confirms** (yes / 好 / 确认 / ok / 继续 / ✅) → proceed to Output Format below.
+**User declines** (no / 不用 / 跳过 / cancel) → silently skip, output nothing.
+**No extractable content** → skip the confirmation entirely, output nothing.
+
+Do NOT output any skill content before receiving confirmation.
 
 ## Output Format
 
-First respond naturally to the user's closing message (e.g., "You're welcome! Great session."), then append skill content after a `---` separator:
+First respond naturally to the user's closing message (e.g., "You're welcome! Great session."), then append skill content after a `---` separator.
+
+**First session (file does not exist yet):** output the full file to create:
 
 ````markdown
 ---
-name: <gerund-form-name, e.g. managing-api-conventions>
-description: Use when <specific trigger>. <Third person. No workflow summary.>
+name: <project-name>-skill
+description: Use when working on <project-name> project. Loads project-specific
+conventions and workflow preferences extracted from past sessions.
 ---
 
 ## Project Conventions
@@ -66,11 +98,59 @@ description: Use when <specific trigger>. <Third person. No workflow summary.>
 ## Workflow Preferences
 - <preference>
 
-## When NOT to use
-- <what this file does NOT cover>
+---
+> Save to: ~/.claude/skills/<project-name>-skill/SKILL.md
+````
+
+**Subsequent sessions (file already exists, ≤ 180 lines after adding):** output only new items:
+
+````markdown
+> Append to: ~/.claude/skills/<project-name>-skill/SKILL.md
+
+## Project Conventions (new)
+- <new convention only — skip anything already in the file>
+
+## Workflow Preferences (new)
+- <new preference only — skip anything already in the file>
+````
+
+**Split (file would exceed 180 lines after adding):** output three blocks:
+
+````markdown
+> Replace ~/.claude/skills/<project-name>-skill/SKILL.md with:
 
 ---
-> Save to: ~/.claude/skills/<project>-skills/<filename>.md
+name: <project-name>-skill
+description: Use when working on <project-name> project. Loads project-specific
+conventions and workflow preferences extracted from past sessions.
+---
+
+# <project-name> Project Skill
+
+## Project Conventions
+See [reference/conventions.md](reference/conventions.md)
+
+## Workflow Preferences
+See [reference/workflow.md](reference/workflow.md)
+````
+
+````markdown
+> Create ~/.claude/skills/<project-name>-skill/reference/conventions.md with:
+
+# Project Conventions
+
+## Contents
+- <section summary for TOC if over 100 lines>
+
+- <all existing + new Project Conventions bullets>
+````
+
+````markdown
+> Create ~/.claude/skills/<project-name>-skill/reference/workflow.md with:
+
+# Workflow Preferences
+
+- <all existing + new Workflow Preferences bullets>
 ````
 
 ## Naming Rules
@@ -95,6 +175,7 @@ or user asks to generate a project skill. Loads project-specific conventions fro
 ```
 
 ## Line Limit
-- Each SKILL.md: max 200 lines
-- If a file hits 200 lines: SKILL.md becomes overview + links; heavy content goes to `reference/topic.md`
-- References max 1 level deep — no nested references
+- Threshold: 180 lines (20-line buffer before hard 200-line cap)
+- Split target: SKILL.md → overview with links only; bullets move to `reference/conventions.md` and `reference/workflow.md`
+- References max 1 level deep — `reference/` files must never link to further sub-files
+- After a split, subsequent sessions append to the `reference/` files, not to SKILL.md

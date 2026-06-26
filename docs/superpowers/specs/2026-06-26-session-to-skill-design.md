@@ -1,6 +1,6 @@
 # session-to-skill Design Spec
 
-**Version:** v1.0  
+**Version:** v1.1  
 **Date:** 2026-06-26  
 **Status:** Approved
 
@@ -52,74 +52,69 @@
 
 ---
 
-## 分类路由
+## 项目专属 Skill 文件
 
-生成前先扫描 `~/.claude/skills/<project>-skills/` 下所有已有文件的 `description` 字段，按以下决策树路由每条内容：
+每个项目有且只有一个专属 skill 目录：`~/.claude/skills/<项目名>-skill/`。
+**绝不读取、写入或修改任何其他项目的 skill 文件。**
+
+`<项目名>` 的确定顺序（优先级从高到低）：
+1. Git 仓库名（`git rev-parse --show-toplevel | xargs basename`）
+2. 当前工作目录名
+3. 以上均不可用时询问用户
 
 ```
-对于每条提炼出的内容：
+会话结束时：
 
-1. 已有完全相同或高度相似的条目？
-   → 跳过（去重）
+1. ~/.claude/skills/<项目名>-skill/SKILL.md 不存在？
+   → 输出完整新文件（含 YAML frontmatter + 两个内容段）
 
-2. 有 description 语义匹配的已有文件，且行数 < 200？
-   → 追加到该文件
+2. 文件已存在？
+   → 只输出新增条目；已存在相同或高度相似的条目一律跳过（去重）
 
-3. 有匹配文件但行数 ≥ 200？
-   → 拆分：保留 SKILL.md 作总览，重内容移入 reference/topic.md
-   → SKILL.md 更新 description，收窄职责范围
-   → 新子文件写好自己的 description
-
-4. 没有匹配的已有文件？
-   → 新建文件，动名词命名，写好 description
+3. 文件达到 200 行？
+   → 拆分：SKILL.md 保留为总览，重内容移入 reference/topic.md
+   → 子文件引用只能一层深，不允许嵌套
 ```
-
-当项目 skill 文件达到 2 个或以上时，维护 `<project>-skills/INDEX.md`，列出所有子文件及各自职责范围。
 
 ---
 
 ## 输出格式
 
-每个 skill 文件输出如下结构：
+**首次（文件不存在）：** 输出完整文件
 
 ```markdown
 ---
-name: <动名词形式，如 managing-api-conventions>
-description: Use when <具体触发条件>. <第三人称，不含工作流摘要>
+name: <项目名>-skill
+description: Use when working on the <项目名> project. Loads project-specific
+conventions and workflow preferences extracted from past sessions.
 ---
 
-## 项目约定
+## Project Conventions
 
 - <约定1>
 - <约定2>
 
-## 协作偏好
+## Workflow Preferences
 
 - <偏好1>
 - <偏好2>
 
-## When NOT to use
-
-- <该文件不覆盖的内容，标明边界>
-
 ---
 
-> 保存路径：~/.claude/skills/<project>-skills/<filename>.md
+> 保存路径：~/.claude/skills/<项目名>-skill/SKILL.md
 ```
 
-### Description 字段规范
+**后续（文件已存在）：** 只输出新增条目
 
-- 以 "Use when..." 开头
-- 只写触发条件，不写工作流程或处理步骤
-- 第三人称
-- 不超过 500 字符
-- 包含可被搜索的具体关键词（项目名、场景词）
+```markdown
+> 追加到：~/.claude/skills/<项目名>-skill/SKILL.md
 
-### 命名规范
+## Project Conventions（新增）
+- <新约定，跳过文件中已有的条目>
 
-- 动名词形式（gerund）：`managing-conventions` 而非 `conventions`
-- 用连字符，全小写
-- 体现职责范围，不用泛称（避免 `utils` / `misc`）
+## Workflow Preferences（新增）
+- <新偏好，跳过文件中已有的条目>
+```
 
 ### 行数约束
 
