@@ -103,6 +103,13 @@ cat CLAUDE.md.patch >> ~/.claude/CLAUDE.md
 
 3. 文件会超过 180 行？
    → 拆分：SKILL.md 保留总览，内容移至 reference/conventions.md 和 reference/workflow.md
+
+4. 写入 skill 文件后，自动注册到项目 CLAUDE.md：
+   → 检查 <项目根目录>/CLAUDE.md 是否已有调用指令
+   → 已存在 → 跳过（幂等）
+   → 不存在 → 追加：
+      ## Project Skill
+      Invoke the `<项目名>-skill` skill at the start of every session using the Skill tool.
 ```
 
 项目名取自 git 仓库名，或当前工作目录名。

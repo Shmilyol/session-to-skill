@@ -73,6 +73,20 @@ directory name → ask user
 - File would exceed 180 lines → split: SKILL.md becomes a slim index; move bullets to
   `reference/conventions.md` and `reference/workflow.md`
 
+**After writing the skill file**, register it in the project's `CLAUDE.md` so Claude auto-invokes
+it on every future session:
+
+1. Get project root: `git rev-parse --show-toplevel`
+2. Check `<project-root>/CLAUDE.md` for an existing `<project-name>-skill` invocation line
+3. Already present → skip (idempotent)
+4. Not present → append to `<project-root>/CLAUDE.md`:
+
+   ```markdown
+
+   ## Project Skill
+   Invoke the `<project-name>-skill` skill at the start of every session using the Skill tool.
+   ```
+
 ## Confirm Before Writing
 
 Show a preview (in the user's language) and wait for confirmation:
@@ -86,7 +100,9 @@ Extracted the following, ready to [create | append to | split] `~/.claude/skills
 **Workflow Preferences (new)**
 - <item>
 
-Shall I write the file now?
+Also: append skill invocation to `<project-root>/CLAUDE.md` (skipped if already present).
+
+Shall I write the files now?
 ```
 
 - Confirmed → use Write tool directly; never output raw skill content in chat

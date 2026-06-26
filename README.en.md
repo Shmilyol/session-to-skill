@@ -106,6 +106,13 @@ On session end:
 3. File would exceed 180 lines?
    → Split: SKILL.md becomes a slim index;
      content moves to reference/conventions.md and reference/workflow.md
+
+4. After writing the skill file, register it in the project's CLAUDE.md:
+   → Check <project-root>/CLAUDE.md for an existing invocation line
+   → Already present → skip (idempotent)
+   → Not present → append:
+      ## Project Skill
+      Invoke the `<project-name>-skill` skill at the start of every session using the Skill tool.
 ```
 
 Project name is derived from the git repo name, or the working directory name.
