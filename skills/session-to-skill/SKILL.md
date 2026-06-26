@@ -26,7 +26,9 @@ Activate when ANY of these occur:
   >
   > If you skip this now, those agreements will be lost after /compact and you'll need to re-establish them. Want to run it now?
 
-**Do NOT trigger on:** Ambiguous single-character responses ("嗯", "ok", "好"), mid-conversation acknowledgments, or messages where the user asks a new question. A closing signal is always required — content richness alone is not sufficient.
+- Mid-session preference signal detected — user's message contains explicit rejection or acceptance keywords such as: "不要"、"别"、"just X"、"only X"、"就可以"、"不用"、"X就行"、"don't"、"stop doing"、"never" — immediately ask: "这条偏好要记录到项目 skill 里吗？" (translate to user's language). If user confirms, proceed to extract and write.
+
+**Do NOT trigger on:** Ambiguous single-character responses ("嗯", "ok", "好"), mid-conversation acknowledgments, or messages where the user asks a new question. A closing signal or explicit preference signal is always required — content richness alone is not sufficient.
 
 ## What to Extract
 
