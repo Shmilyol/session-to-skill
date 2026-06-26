@@ -44,26 +44,32 @@ Next session, only new items are output — nothing already in the file is repea
 
 ## Installation
 
-**Step 1: Clone the repository**
+### Option 1: One-liner (recommended)
 
 ```bash
-git clone https://github.com/<your-username>/session-to-skill.git
+curl -fsSL https://raw.githubusercontent.com/Shmilyol/session-to-skill/main/install.sh | bash
+```
+
+The script will:
+- Download the skill to `~/.claude/skills/session-to-skill/`
+- Append the trigger rule to `~/.claude/CLAUDE.md`
+- Skip if already installed (safe to re-run)
+
+### Option 2: Manual install
+
+```bash
+# Clone the repository
+git clone https://github.com/Shmilyol/session-to-skill.git
 cd session-to-skill
-```
 
-**Step 2: Install the skill**
-
-```bash
+# Install the skill
 cp -r skills/session-to-skill ~/.claude/skills/
-```
 
-**Step 3: Add the global trigger to CLAUDE.md**
-
-```bash
+# Add the global trigger
 cat CLAUDE.md.patch >> ~/.claude/CLAUDE.md
 ```
 
-That's it. The skill activates automatically at the end of future sessions.
+The skill activates automatically at the end of future sessions.
 
 ## What gets extracted
 
