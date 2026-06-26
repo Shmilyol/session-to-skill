@@ -1,6 +1,6 @@
 ---
 name: session-to-skill
-description: Use when a project session is ending (user says done/thanks/收工/完成了), all tasks are complete, the user explicitly requests skill generation, or a mid-session preference signal is detected. Writes project conventions and workflow preferences to ~/.claude/skills/<project-name>-skill/SKILL.md.
+description: Use when a session is ending (user's message conveys a closing/wrap-up intent), all tasks are complete with no new requests, the user explicitly asks to generate or extract a skill, or a mid-session preference signal is detected. Writes project conventions and workflow preferences to ~/.claude/skills/<project-name>-skill/SKILL.md.
 ---
 
 # Session to Skill
@@ -12,21 +12,27 @@ directly to `~/.claude/skills/<project-name>-skill/SKILL.md`. **Never write to t
 
 ### 1. End-of-session
 
-User sends a standalone closing word, e.g.: `done`, `thanks`, `谢谢`, `收工`, `完成了`, `就这样`,
-`好了` — or all tasks are complete with no new requests.
+User's message conveys a **session-closing intent** — they are wrapping up, expressing gratitude
+for the session, or signaling they're done for now. Detect by semantic meaning, not exact words
+(e.g. "done", "thanks", "谢谢", "收工" are illustrative, not exhaustive). Also triggers when all
+tasks are complete with no new requests.
 
 ### 2. Explicit request
 
-User asks, e.g.: `generate skill`, `生成 skill`, `总结一下`, `帮我提炼 skill`
+User explicitly asks to **generate, extract, or summarize** the session into a skill file. Detect
+by intent, not exact phrase (e.g. "generate skill", "生成 skill", "总结一下" are illustrative).
 
 ### 3. Mid-session preference signal
 
-User's message contains a rejection, acceptance, or recommendation keyword — **immediately ask**
-whether to record it:
+User's message expresses a **preference signal** — **immediately ask** whether to record it.
+Detect by **semantic intent**, not exact keywords. Examples are illustrative, not exhaustive:
 
-- Rejection/acceptance, e.g.: `don't` / `never` / `only X` / `just X` / `不要` / `别` / `就可以` /
-  `不用` / `X就行`
-- Recommendation, e.g.: `you should` / `you need to` / `always` / `你应该` / `你需要` / `必须`
+- **Rejection / exclusion intent** — user signals what they don't want or what to stop doing
+  (e.g. "don't", "never", "不要", "别", or any semantically equivalent phrasing)
+- **Constraint / narrowing intent** — user limits scope to a specific approach, tool, or behavior
+  (e.g. "only", "just X is enough", "就可以", "X 就行", or similar narrowing language)
+- **Directive / recommendation intent** — user says what I should always or must do
+  (e.g. "you should", "always", "你应该", "你需要", "必须", or similar directive phrasing)
 
 Ask (in the user's language): "Should I record this preference in the project skill?" Extract only
 that item if confirmed.
@@ -37,8 +43,8 @@ When suggesting `/compact`, append the reminder
 from [reference/compact-reminder.md](reference/compact-reminder.md) (translate to the user's
 language).
 
-**Do NOT trigger on:** `嗯`, `ok`, `好`, mid-session confirmations, or messages asking a new
-question.
+**Do NOT trigger on:** brief acknowledgments, mid-session confirmations, or messages whose intent
+is to continue or ask something new — not to close the session or express a preference.
 
 ## What to Extract
 

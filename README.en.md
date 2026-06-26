@@ -114,15 +114,18 @@ Project name is derived from the git repo name, or the working directory name.
 
 Activates on any of:
 
-- **End-of-session:** Standalone closing word, e.g. `done` / `thanks` / `谢谢` / `收工` / `完成了` /
-  `就这样` / `好了` — or all tasks complete with no new requests
-- **Explicit request:** `generate skill` / `生成 skill` / `总结一下` / `帮我提炼 skill`
-- **Mid-session preference signal:** Message contains a rejection, acceptance, or recommendation
-  keyword — e.g. `don't` / `never` / `always` / `不要` / `别` / `你应该` / `你需要` — Claude
-  immediately asks whether to record it in the project skill
+- **End-of-session:** Message conveys a **session-closing intent** — user is wrapping up, expressing
+  gratitude, or signaling they're done (e.g. "done", "thanks", "谢谢", "收工" are illustrative, not
+  exhaustive) — or all tasks complete with no new requests
+- **Explicit request:** User explicitly asks to **generate, extract, or summarize** the session into
+  a skill file — detected by intent, not exact phrase
+- **Mid-session preference signal:** Message conveys rejection, narrowing, or directive **intent** —
+  detected by semantic understanding, not fixed keywords (e.g. "don't", "just X", "你应该" are
+  illustrative; equivalent phrasing triggers the same response) — Claude immediately asks whether
+  to record it in the project skill
 
-Does **not** trigger on: `嗯`, `ok`, `好`, mid-session acknowledgments, or any message asking a new
-question.
+Does **not** trigger on: brief acknowledgments, mid-session confirmations, or any message whose
+intent is to continue or ask something new.
 
 ## Compatibility
 
