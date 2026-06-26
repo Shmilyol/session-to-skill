@@ -7,7 +7,7 @@ description: Use when a project session is ending and the user expresses complet
 
 ## Overview
 
-At the natural end of a work session, extract project conventions and workflow preferences from the current conversation and output structured skill content after a `---` separator. The user saves it manually.
+At the natural end of a work session, extract project conventions and workflow preferences from the current conversation and write them to `~/.claude/skills/<project-name>-skill/SKILL.md` using the Write tool after user confirmation.
 
 ## Trigger Conditions
 
@@ -48,6 +48,12 @@ Extract ONLY when explicitly signaled:
 
 Each project gets exactly one dedicated skill directory: `~/.claude/skills/<project-name>-skill/`.
 **Never read, write, or modify any other project's skill files.**
+
+**CRITICAL — Memory system is forbidden here:**
+- Do NOT write any extracted content to the auto-memory system (`~/.claude/projects/.../memory/`)
+- Do NOT treat extracted conventions or preferences as "project memories" or "feedback memories"
+- Skill output goes ONLY to `~/.claude/skills/<project-name>-skill/SKILL.md`
+- Memory ≠ Skill: the memory system is for session context; skills are loaded via the Skill tool
 
 Determine `<project-name>` from (in priority order):
 1. Git repo name (`git rev-parse --show-toplevel | xargs basename`)
@@ -91,11 +97,11 @@ Do NOT output any skill content before receiving confirmation.
 
 ## Output Format
 
-First respond naturally to the user's closing message (e.g., "You're welcome! Great session."), then append skill content after a `---` separator.
+First respond naturally to the user's closing message (e.g., "You're welcome! Great session."), then use the Write tool to save the skill file directly. Never output raw skill content in the chat — write it to disk.
 
-**First session (file does not exist yet):** output the full file to create:
+**First session (file does not exist yet):** use Write tool to create `~/.claude/skills/<project-name>-skill/SKILL.md`:
 
-````markdown
+```
 ---
 name: <project-name>-skill
 description: Use when working on <project-name> project. Loads project-specific
@@ -107,61 +113,29 @@ conventions and workflow preferences extracted from past sessions.
 
 ## Workflow Preferences
 - <preference>
+```
 
----
-> Save to: ~/.claude/skills/<project-name>-skill/SKILL.md
-````
+**Subsequent sessions (file already exists, ≤ 180 lines after adding):** use Read to load existing content, merge new items, then use Write to overwrite the file with the merged result. Skip any items already present.
 
-**Subsequent sessions (file already exists, ≤ 180 lines after adding):** output only new items:
-
-````markdown
-> Append to: ~/.claude/skills/<project-name>-skill/SKILL.md
-
-## Project Conventions (new)
-- <new convention only — skip anything already in the file>
-
-## Workflow Preferences (new)
-- <new preference only — skip anything already in the file>
-````
-
-**Split (file would exceed 180 lines after adding):** output three blocks:
-
-````markdown
-> Replace ~/.claude/skills/<project-name>-skill/SKILL.md with:
-
+**Split (file would exceed 180 lines after adding):** use Write to:
+1. Overwrite `~/.claude/skills/<project-name>-skill/SKILL.md` with a slim index:
+```
 ---
 name: <project-name>-skill
 description: Use when working on <project-name> project. Loads project-specific
 conventions and workflow preferences extracted from past sessions.
 ---
 
-# <project-name> Project Skill
-
 ## Project Conventions
 See [reference/conventions.md](reference/conventions.md)
 
 ## Workflow Preferences
 See [reference/workflow.md](reference/workflow.md)
-````
+```
+2. Create `~/.claude/skills/<project-name>-skill/reference/conventions.md` with all conventions
+3. Create `~/.claude/skills/<project-name>-skill/reference/workflow.md` with all workflow preferences
 
-````markdown
-> Create ~/.claude/skills/<project-name>-skill/reference/conventions.md with:
-
-# Project Conventions
-
-## Contents
-- <section summary for TOC if over 100 lines>
-
-- <all existing + new Project Conventions bullets>
-````
-
-````markdown
-> Create ~/.claude/skills/<project-name>-skill/reference/workflow.md with:
-
-# Workflow Preferences
-
-- <all existing + new Workflow Preferences bullets>
-````
+After writing, confirm the path to the user: "已保存到 `~/.claude/skills/<project-name>-skill/SKILL.md`"
 
 ## Naming Rules
 - Gerund form: `managing-api-conventions` not `api-conventions`
