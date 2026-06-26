@@ -16,6 +16,16 @@ Activate when ANY of these occur:
 - All main tasks complete, no pending requests, last few messages are confirmations
 - User explicitly says: "生成 skill" / "总结一下" / "帮我提炼 skill" / "generate skill"
 
+- Context is approaching its limit and Claude suggests `/compact` — detect the language the user has been writing in, then append to the suggestion in that same language:
+
+  **Template (translate into the user's language before sending):**
+
+  > Also, consider running **session-to-skill** before compacting.
+  >
+  > session-to-skill scans this conversation and extracts any explicit project conventions you've established with Claude — things like "always use named exports" or "show me a plan before coding" — and saves them to a dedicated skill file for this project. Next time you open a new session, Claude will load these conventions automatically, so you never have to repeat yourself.
+  >
+  > If you skip this now, those agreements will be lost after /compact and you'll need to re-establish them. Want to run it now?
+
 **Do NOT trigger on:** Ambiguous single-character responses ("嗯", "ok", "好"), mid-conversation acknowledgments, or messages where the user asks a new question. A closing signal is always required — content richness alone is not sufficient.
 
 ## What to Extract
