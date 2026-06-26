@@ -1,5 +1,7 @@
 # session-to-skill
 
+[中文](README.zh.md) | **English**
+
 A skill that automatically extracts project conventions and workflow preferences from your work session and generates a ready-to-save project skill file — without you having to write one manually.
 
 ## How it works

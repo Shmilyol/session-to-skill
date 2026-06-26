@@ -1,5 +1,7 @@
 # session-to-skill
 
+**中文** | [English](README.md)
+
 一个 skill，在工作会话结束时自动从对话中提炼项目约定和协作偏好，生成随时可保存的项目专属 skill 文件——无需手动编写。
 
 ## 工作原理
