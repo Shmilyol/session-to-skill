@@ -24,8 +24,11 @@ by intent, not exact phrase (e.g. "generate skill", "生成 skill", "总结一�
 
 ### 3. Mid-session preference signal
 
-User's message expresses a **preference signal** — **immediately ask** whether to record it.
-Detect by **semantic intent**, not exact keywords. Examples are illustrative, not exhaustive:
+Triggered by the global rule in `CLAUDE.md` (active regardless of whether this skill is invoked).
+When the user confirms, invoke this skill and apply the extraction and write rules below,
+recording only that preference item.
+
+The three intent types that trigger the rule:
 
 - **Rejection / exclusion intent** — user signals what they don't want or what to stop doing
   (e.g. "don't", "never", "不要", "别", or any semantically equivalent phrasing)
@@ -33,9 +36,6 @@ Detect by **semantic intent**, not exact keywords. Examples are illustrative, no
   (e.g. "only", "just X is enough", "就可以", "X 就行", or similar narrowing language)
 - **Directive / recommendation intent** — user says what I should always or must do
   (e.g. "you should", "always", "你应该", "你需要", "必须", or similar directive phrasing)
-
-Ask (in the user's language): "Should I record this preference in the project skill?" Extract only
-that item if confirmed.
 
 ### 4. /compact suggestion
 

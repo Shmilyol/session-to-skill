@@ -129,7 +129,8 @@ Activates on any of:
 - **Mid-session preference signal:** Message conveys rejection, narrowing, or directive **intent** —
   detected by semantic understanding, not fixed keywords (e.g. "don't", "just X", "你应该" are
   illustrative; equivalent phrasing triggers the same response) — Claude immediately asks whether
-  to record it in the project skill
+  to record it in the project skill. This rule lives in `CLAUDE.md` and is always active,
+  regardless of whether the skill has been invoked
 
 Does **not** trigger on: brief acknowledgments, mid-session confirmations, or any message whose
 intent is to continue or ask something new.

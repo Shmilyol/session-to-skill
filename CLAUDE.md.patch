@@ -3,3 +3,12 @@
 When a conversation reaches a natural ending point, invoke the `session-to-skill` skill
 and follow it to extract project conventions and workflow preferences from this session,
 displaying the result as markdown at the end of the response.
+
+## Mid-session Preference Detection
+
+When a user message conveys rejection, narrowing, or directive intent — detected by semantic
+meaning, not exact keywords — immediately ask (in the user's language): "Should I record this
+preference in the project skill?"
+
+If confirmed: invoke the `session-to-skill` skill and follow its extraction and write rules,
+recording only that preference item.
