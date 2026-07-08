@@ -1,6 +1,6 @@
 ---
 name: session-to-skill
-description: Use when a session is ending (user's message conveys a closing/wrap-up intent), all tasks are complete with no new requests, the user explicitly asks to generate or extract a skill, or a mid-session preference signal is detected. Writes project conventions and workflow preferences to ~/.claude/skills/<project-name>-skill/SKILL.md.
+description: Use when a session is ending (closing/wrap-up intent, or all tasks complete with no new requests), when the user asks to recap what conventions/preferences were established in this session — even a plain summary request, since the skill itself decides whether to just answer or also offer to persist — when the user explicitly asks to save/persist conventions into a skill file, when a mid-session preference signal is detected, or right before suggesting /compact. Writes project conventions and workflow preferences to ~/.claude/skills/<project-name>-skill/SKILL.md.
 ---
 
 # Session to Skill
@@ -21,7 +21,8 @@ tasks are complete with no new requests.
 
 User explicitly asks to **persist** conventions/preferences into a skill file. Detect this by a
 **persistence signal**, not by matching specific phrases: does the request name something that
-outlives this turn — a file, "skill", "记住", "保存", "以后/下次自动加载" — or does it only ask about
+outlives this turn — a file, "skill", "记住", "保存", "以后/下次自动加载" — or does it only ask
+about
 *this conversation's content* ("总结/回顾/讲讲/复盘/我们聊了什么") with no reference to storage or
 reuse? Only the former counts as this trigger. Any phrasing lacking a persistence signal is a plain
 recap, regardless of surface wording — including phrasings not listed here.

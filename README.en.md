@@ -124,13 +124,19 @@ Activates on any of:
 - **End-of-session:** Message conveys a **session-closing intent** — user is wrapping up, expressing
   gratitude, or signaling they're done (e.g. "done", "thanks", "谢谢", "收工" are illustrative, not
   exhaustive) — or all tasks complete with no new requests
-- **Explicit request:** User explicitly asks to **generate, extract, or summarize** the session into
-  a skill file — detected by intent, not exact phrase
+- **Explicit request:** User asks to **persist** conventions/preferences into a skill file —
+  detected by a **persistence signal** (mentions of a file, "skill", "remember", "save",
+  "next time/auto-load" — anything that outlives this turn), not by matching fixed phrases.
+  A plain recap request (e.g. "summarize what you noted", "what did we discuss") gets answered
+  in chat first; only if that recap's own content is itself conventions/preferences does Claude
+  additionally ask whether to also persist it as a skill
 - **Mid-session preference signal:** Message conveys rejection, narrowing, or directive **intent** —
   detected by semantic understanding, not fixed keywords (e.g. "don't", "just X", "你应该" are
   illustrative; equivalent phrasing triggers the same response) — Claude immediately asks whether
   to record it in the project skill. This rule lives in `CLAUDE.md` and is always active,
   regardless of whether the skill has been invoked
+- **`/compact` suggestion:** When Claude is about to suggest `/compact`, it appends a reminder that
+  running session-to-skill first avoids losing these conventions to compaction
 
 Does **not** trigger on: brief acknowledgments, mid-session confirmations, or any message whose
 intent is to continue or ask something new.
