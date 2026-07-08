@@ -10,12 +10,20 @@ directly to `~/.claude/skills/<project-name>-skill/SKILL.md`. **Never write to t
 
 ## Trigger Conditions
 
+> **All triggers below are matched by semantic intent, never by keyword.** The example words in
+> each condition are calibration anchors, not a whitelist — and this cuts **both ways**: a message
+> containing none of the listed words still triggers if the intent matches; a message containing a
+> listed word does NOT trigger if the intent doesn't match. The examples happen to be written in
+> English and Chinese, but the intent itself is language-independent — the same reasoning applies in
+> any language.
+
 ### 1. End-of-session
 
 User's message conveys a **session-closing intent** — they are wrapping up, expressing gratitude
 for the session, or signaling they're done for now. Detect by semantic meaning, not exact words
 (e.g. "done", "thanks", "谢谢", "收工" are illustrative, not exhaustive). Also triggers when all
-tasks are complete with no new requests.
+tasks are complete with no new requests. Contrast: "你先歇会儿吧" or "这段先放着" express concern or
+deferral, not session closing — do not trigger.
 
 ### 2. Explicit request
 
@@ -48,6 +56,10 @@ The three intent types that trigger the rule:
   (e.g. "only", "just X is enough", "就可以", "X 就行", or similar narrowing language)
 - **Directive / recommendation intent** — user says what I should always or must do
   (e.g. "you should", "always", "你应该", "你需要", "必须", or similar directive phrasing)
+
+Contrast by intent, not surface form: "别删这个文件,等下还要用" is a one-off instruction for the
+current task (no standing preference) → not a mid-session signal; "别每次都自动 commit" states a
+standing rule → is a signal. Same "别", opposite outcome.
 
 ### 4. /compact suggestion
 

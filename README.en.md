@@ -119,6 +119,11 @@ Project name is derived from the git repo name, or the working directory name.
 
 ## Trigger conditions
 
+All triggers are matched by **semantic intent**, never by keyword — and this cuts both ways: a
+message with none of the example words still triggers if the intent matches, and one containing an
+example word does not trigger if the intent doesn't. Examples are in English and Chinese, but the
+intent is language-independent.
+
 Activates on any of:
 
 - **End-of-session:** Message conveys a **session-closing intent** — user is wrapping up, expressing
