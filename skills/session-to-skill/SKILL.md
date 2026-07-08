@@ -19,8 +19,19 @@ tasks are complete with no new requests.
 
 ### 2. Explicit request
 
-User explicitly asks to **generate, extract, or summarize** the session into a skill file. Detect
-by intent, not exact phrase (e.g. "generate skill", "生成 skill", "总结一下" are illustrative).
+User explicitly asks to **persist** conventions/preferences into a skill file. Detect this by a
+**persistence signal**, not by matching specific phrases: does the request name something that
+outlives this turn — a file, "skill", "记住", "保存", "以后/下次自动加载" — or does it only ask about
+*this conversation's content* ("总结/回顾/讲讲/复盘/我们聊了什么") with no reference to storage or
+reuse? Only the former counts as this trigger. Any phrasing lacking a persistence signal is a plain
+recap, regardless of surface wording — including phrasings not listed here.
+
+**Plain recap ≠ silent skip.** When a request lacks a persistence signal, still answer with the
+plain-text recap first. Then check the recap's own content: if what you just summarized *is itself*
+conventions/preferences (the material this skill extracts), ask once, after answering: "要不要我也
+把这些存成项目 skill,下次自动加载?" If declined, don't ask again this session. Never write a file
+just because the request was shaped like a summary — persistence requires either the persistence
+signal above or this explicit follow-up confirmation.
 
 ### 3. Mid-session preference signal
 
