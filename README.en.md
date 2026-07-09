@@ -100,14 +100,17 @@ On session end:
 1. ~/.claude/skills/<project-name>-skill/SKILL.md does not exist?
    → Write full file (first session)
 
-2. File exists, stays ≤ 180 lines after adding?
-   → Read, merge new items (skip duplicates), write
+2. File exists?
+   → Read it, reconcile each new item against the existing ones by meaning
+     (not string match) before writing:
+     · Semantic duplicate (same intent, different wording) → skip, don't re-add
+     · Refines or contradicts an existing item → replace the old item in place;
+       never leave two contradictory instructions side by side
+     · Genuinely new → append under the matching section
+   → The file is a living record, not an append-only log — every write leaves it
+     internally consistent
 
-3. File would exceed 180 lines?
-   → Split: SKILL.md becomes a slim index;
-     content moves to reference/conventions.md and reference/workflow.md
-
-4. After writing the skill file, register it in the project's CLAUDE.md:
+3. After writing the skill file, register it in the project's CLAUDE.md:
    → Check <project-root>/CLAUDE.md for an existing invocation line
    → Already present → skip (idempotent)
    → Not present → append:

@@ -93,9 +93,17 @@ directory name → ask user
 **Decision:**
 
 - File doesn't exist → create full file
-- File exists, stays ≤ 180 lines → Read, merge new items (skip duplicates), Write
-- File would exceed 180 lines → split: SKILL.md becomes a slim index; move bullets to
-  `reference/conventions.md` and `reference/workflow.md`
+- File exists → Read it, then **reconcile** each new item against the existing ones **by meaning,
+  not string match**, before writing:
+  - **Semantic duplicate** — same intent as an existing item, regardless of wording (e.g. new
+    "commit 前先问我" vs existing "不要主动 commit") → skip, do not add
+  - **Refines or contradicts** an existing item (e.g. new "现在可以自动 commit 了" vs existing
+    "不要主动 commit") → **replace the old item in place**; never leave both to accumulate into
+    contradictory instructions
+  - **Genuinely new** → append under the matching section
+
+The file is a living record, not an append-only log: every write leaves it internally consistent,
+with no stale or contradictory items.
 
 **After writing the skill file**, register it in the project's `CLAUDE.md` so Claude auto-invokes
 it on every future session:
@@ -116,13 +124,14 @@ it on every future session:
 Show a preview (in the user's language) and wait for confirmation:
 
 ```
-Extracted the following, ready to [create | append to | split] `~/.claude/skills/<project-name>-skill/SKILL.md`:
+Extracted the following, ready to [create | update] `~/.claude/skills/<project-name>-skill/SKILL.md`:
 
-**Project Conventions (new)**
-- <item>
+**Project Conventions**
+- (new) <item>
+- (replaces "<old item>") <item>   ← only when a new item supersedes an existing one
 
-**Workflow Preferences (new)**
-- <item>
+**Workflow Preferences**
+- (new) <item>
 
 Also: append skill invocation to `<project-root>/CLAUDE.md` (skipped if already present).
 
